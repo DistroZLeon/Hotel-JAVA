@@ -1,45 +1,45 @@
 import java.util.Scanner;
 
 public class GuestGroup {
-    protected int nrOfGuests, nrOfDays, nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals;
-    protected int[] apartmentsArray, normalsArray, scenesArray, individualsArray;
-    protected Guest[] guests;
-    protected String spectacleRoomType;
+    private int nrOfGuests, nrOfDays, nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals, id, minDay, state;
+    private int[] apartmentsArray, normalsArray, scenesArray, individualsArray;
+    private Guest[] guests;
+    private String spectacleRoomType;
     public int getNrOfGuests() {
-        return nrOfGuests;
+        return this.nrOfGuests;
     }
     public int getNrOfDays() {
-        return nrOfDays;
+        return this.nrOfDays;
     }
     public Guest getGuest(int i) {
-        return guests[i];
+        return this.guests[i];
     }
     public String getSpectacleRoomType() {
-        return spectacleRoomType;
+        return this.spectacleRoomType;
     }
     public int getNrOfApartments() {
-        return nrOfApartments;
+        return this.nrOfApartments;
     }
     public void setNrOfApartments(int nrOfApartments) {
         this.nrOfApartments = nrOfApartments;
         this.apartmentsArray= new int[nrOfApartments];
     }
     public int getNrOfNormals() {
-        return nrOfNormals;
+        return this.nrOfNormals;
     }
     public void setNrOfNormals(int nrOfNormals) {
         this.nrOfNormals = nrOfNormals;
         this.normalsArray= new int[nrOfNormals];
     }
     public int getNrOfScenes() {
-        return nrOfScenes;
+        return this.nrOfScenes;
     }
     public void setNrOfScenes(int nrOfScenes) {
         this.nrOfScenes = nrOfScenes;
         this.scenesArray= new int[nrOfScenes];
     }
     public int getNrOfIndividuals() {
-        return nrOfIndividuals;
+        return this.nrOfIndividuals;
     }
     public void setNrOfIndividuals(int nrOfIndividuals) {
         this.nrOfIndividuals = nrOfIndividuals;
@@ -69,8 +69,27 @@ public class GuestGroup {
     public void setIndividualsArray(int individual, int i) {
         this.individualsArray[i] = individual;
     }
-    public void setGuestRoomIndex(int i, int index){
-        this.guests[i].setRoomIndex(index);
+    public int getId(){
+        return this.id;
+    }
+    public int getMinDay(){
+        return this.minDay;
+    }
+    public void setMinDay(int val){
+        this.minDay=val;
+    }
+    public int getState(){
+        return this.state;
+    }
+    public void setState(int state){
+        this.state= state;
+    }
+    public GuestGroup(){
+        this(0);
+    }
+    public GuestGroup(int index){
+        this.id= index;
+        this.state=1;
     }
     public void read(Scanner sc){
         System.out.println("Enter number of days for your stay: ");

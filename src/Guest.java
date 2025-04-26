@@ -1,10 +1,10 @@
 import java.util.Scanner;
 
 public class Guest {
-    protected String name, CNP;
-    protected boolean wantsJacuzzi, wantsAtRestaurant;
-    protected String[] prefferedMenus;
-    protected int age, nrOfPrefferedMenus, roomIndex;
+    private String name, CNP;
+    private boolean wantsJacuzzi, wantsAtRestaurant;
+    private String[] prefferedMenus;
+    private int age, nrOfPrefferedMenus, roomIndex;
     public Guest(){
     }
     public String getName() {
@@ -18,6 +18,10 @@ public class Guest {
     }
     public boolean isWantsAtRestaurant() {
         return wantsAtRestaurant;
+    }
+    public void notWantsAtRestaurant(){
+        this.wantsAtRestaurant=false;
+        this.prefferedMenus= null;
     }
     public int getAge() {
         return this.age;

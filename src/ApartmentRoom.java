@@ -1,8 +1,9 @@
 import java.util.Scanner;
 
 public class ApartmentRoom extends Room implements RoomsInterface {
-    protected static int maxCap;
-    protected boolean hasJacuzzi;
+    private static int maxCap;
+    private static boolean isSet = false;
+    private boolean hasJacuzzi;
     @Override
     public double getTruePrice(){
         return this.basePrice*ApartmentRoom.maxCap*1.20;
@@ -24,5 +25,16 @@ public class ApartmentRoom extends Room implements RoomsInterface {
         this.basePrice= sc.nextDouble();
         int choice= sc.nextInt();
         this.hasJacuzzi= choice!=0;
+    }
+    public static int getMaxCap() {
+        return ApartmentRoom.maxCap;
+    }
+    public static void setMaxCap(int maxCap) {
+        if(!ApartmentRoom.isSet){
+            ApartmentRoom.maxCap = maxCap;
+            ApartmentRoom.isSet=true;
+        }
+        else
+        throw new IllegalStateException("maxCap has already been set for ApartmentRoom.");
     }
 }

@@ -1,9 +1,9 @@
 import java.util.Scanner;
 
 public class Restaurant {
-    protected int[] days;
-    protected int nrOfSeats, nrOfMenus;
-    protected Menu[] menus;
+    private final int[] days;
+    private int nrOfSeats, nrOfMenus;
+    private Menu[] menus;
     public int getDays(int i) {
         return this.days[i];
     }

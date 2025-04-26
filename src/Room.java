@@ -1,9 +1,9 @@
 import java.util.Scanner;
 
 public abstract class Room {
-    protected int index;
+    private int index;
     double basePrice;
-    protected int[] days;
+    private int[] days;
     public Room(){
         this(0);
     }

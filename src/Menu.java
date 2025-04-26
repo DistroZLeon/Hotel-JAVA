@@ -1,8 +1,8 @@
 import java.util.Scanner;
 
 public class Menu {
-    protected double cost;
-    protected String name;
+    private double cost;
+    private String name;
     public double getCost() {
         return cost;
     }

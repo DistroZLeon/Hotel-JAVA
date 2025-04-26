@@ -1,9 +1,9 @@
 import java.util.Scanner;
 
 public class Hotel {
-    protected int nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals;
-    protected Room[] rooms;
-    protected Restaurant restaurant;
+    private int nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals;
+    private Room[] rooms;
+    private final Restaurant restaurant;
     public int getNrApartments() {
         return nrOfApartments;
     }
@@ -19,12 +19,6 @@ public class Hotel {
     public Restaurant getRestaurant() {
         return restaurant;
     }
-    public void setRestaurantDay(int val, int i) {
-        this.restaurant.setIdDays(val, i);
-    }
-    public void setRoomDay(int i,int val, int index ){
-        this.rooms[i].setIdDays(val, index);
-    }
     public Room getRoom(int i){
         return this.rooms[i];
     }
@@ -37,12 +31,12 @@ public class Hotel {
         this.nrOfIndividuals= sc.nextInt();
         this.nrOfScenes= sc.nextInt();
         this.rooms= new Room[this.nrOfNormals+this.nrOfApartments+this.nrOfIndividuals+this.nrOfScenes];
-        NormalRoom.maxCap= sc.nextInt();
-        ApartmentRoom.maxCap= sc.nextInt();
-        IndividualSpectacleRoom.minCap= sc.nextInt();
-        IndividualSpectacleRoom.maxCap= sc.nextInt();
-        SceneSpectacleRoom.minCap= sc.nextInt();
-        SceneSpectacleRoom.maxCap= sc.nextInt();
+        NormalRoom.setMaxCap(sc.nextInt());
+        ApartmentRoom.setMaxCap(sc.nextInt());
+        IndividualSpectacleRoom.setMinCap(sc.nextInt());
+        IndividualSpectacleRoom.setMaxCap(sc.nextInt());
+        SceneSpectacleRoom.setMinCap(sc.nextInt());
+        SceneSpectacleRoom.setMaxCap(sc.nextInt());
         int x=0;
         for(int i=x; i< x+this.nrOfNormals; ++i){
             this.rooms[i]= new NormalRoom(i+1);
