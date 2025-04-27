@@ -4,7 +4,7 @@ public class Restaurant {
     private final int[] days;
     private int nrOfSeats, nrOfMenus;
     private Menu[] menus;
-    public int getDays(int i) {
+    public int getNrOfGuestsThatDay(int i) {
         return this.days[i];
     }
     public void setIdDays(int day, int i) {

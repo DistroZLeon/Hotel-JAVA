@@ -1,23 +1,29 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Hotel {
     private int nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals;
     private Room[] rooms;
+    private final Map<Class<? extends Room>, Integer> roomCounts = new HashMap<>();
     private final Restaurant restaurant;
     public int getNrApartments() {
-        return nrOfApartments;
+        return this.nrOfApartments;
     }
     public int getNrNormals() {
-        return nrOfNormals;
+        return this.nrOfNormals;
     }
     public int getNrScenes() {
-        return nrOfScenes;
+        return this.nrOfScenes;
     }
     public int getNrIndividuals() {
-        return nrOfIndividuals;
+        return this.nrOfIndividuals;
+    }
+    public int getNrOfThatRoom(Room room){
+        return roomCounts.getOrDefault(room.getClass(), 0);
     }
     public Restaurant getRestaurant() {
-        return restaurant;
+        return this.restaurant;
     }
     public Room getRoom(int i){
         return this.rooms[i];
@@ -44,7 +50,7 @@ public class Hotel {
         }
         x+=this.nrOfNormals;
         for (int i = x; i < x+this.nrOfApartments; ++i){ 
-            this.rooms[i] = new ApartmentRoom(i+1);
+            this.rooms[i]= new ApartmentRoom(i+1);
             this.rooms[i].read(sc);
         }
         x+=this.nrOfApartments;
@@ -58,5 +64,10 @@ public class Hotel {
             this.rooms[i].read(sc);
         }
         this.restaurant.read(sc);
+        roomCounts.put(NormalRoom.class, this.nrOfNormals);
+        roomCounts.put(ApartmentRoom.class, this.nrOfApartments);
+        roomCounts.put(IndividualSpectacleRoom.class, this.nrOfIndividuals);
+        roomCounts.put(SceneSpectacleRoom.class, this.nrOfScenes);
+
     }
 }

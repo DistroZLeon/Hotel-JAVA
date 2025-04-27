@@ -90,6 +90,7 @@ public class GuestGroup {
     public GuestGroup(int index){
         this.id= index;
         this.state=1;
+        this.spectacleRoomType= "";
     }
     public void read(Scanner sc){
         System.out.println("Enter number of days for your stay: ");
