@@ -4,31 +4,39 @@ public class ApartmentRoom extends Room implements RoomsInterface {
     private static int maxCap;
     private static boolean isSet = false;
     private boolean hasJacuzzi;
+
     @Override
     public double getTruePrice(){
         return this.basePrice*ApartmentRoom.maxCap*1.20;
     }
+
     public ApartmentRoom(){
         super(0);
     }
+
     public ApartmentRoom(int i){
         super(i);
     }
+
     public boolean getHasJacuzzi() {
         return this.hasJacuzzi;
     }
+
     public void setHasJacuzzi(boolean jacuzzi) {
         this.hasJacuzzi = jacuzzi;
     }
+
     @Override
     public void read(Scanner sc){
         this.basePrice= sc.nextDouble();
         int choice= sc.nextInt();
         this.hasJacuzzi= choice!=0;
     }
+
     public static int getMaxCap() {
         return ApartmentRoom.maxCap;
     }
+    
     public static void setMaxCap(int maxCap) {
         if(!ApartmentRoom.isSet){
             ApartmentRoom.maxCap = maxCap;

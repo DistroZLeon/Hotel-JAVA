@@ -7,30 +7,39 @@ public class Hotel {
     private Room[] rooms;
     private final Map<Class<? extends Room>, Integer> roomCounts = new HashMap<>();
     private final Restaurant restaurant;
+
     public int getNrApartments() {
         return this.nrOfApartments;
     }
+
     public int getNrNormals() {
         return this.nrOfNormals;
     }
+
     public int getNrScenes() {
         return this.nrOfScenes;
     }
+
     public int getNrIndividuals() {
         return this.nrOfIndividuals;
     }
+
     public int getNrOfThatRoom(Room room){
         return roomCounts.getOrDefault(room.getClass(), 0);
     }
+
     public Restaurant getRestaurant() {
         return this.restaurant;
     }
+
     public Room getRoom(int i){
         return this.rooms[i];
     }
+
     public Hotel(){
         this.restaurant= new Restaurant();
     }
+
     public void read(Scanner sc){
         this.nrOfNormals= sc.nextInt();
         this.nrOfApartments= sc.nextInt();
@@ -68,6 +77,5 @@ public class Hotel {
         roomCounts.put(ApartmentRoom.class, this.nrOfApartments);
         roomCounts.put(IndividualSpectacleRoom.class, this.nrOfIndividuals);
         roomCounts.put(SceneSpectacleRoom.class, this.nrOfScenes);
-
     }
 }

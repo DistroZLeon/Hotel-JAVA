@@ -5,39 +5,51 @@ public class Guest {
     private boolean wantsJacuzzi, wantsAtRestaurant;
     private String[] prefferedMenus;
     private int age, nrOfPrefferedMenus, roomIndex;
+
     public Guest(){
     }
+
     public String getName() {
         return name;
     }
+
     public String getCNP() {
         return CNP;
     }
+
     public boolean isWantsJacuzzi() {
         return this.wantsJacuzzi;
     }
+
     public boolean isWantsAtRestaurant() {
         return wantsAtRestaurant;
     }
+
     public void notWantsAtRestaurant(){
         this.wantsAtRestaurant=false;
         this.prefferedMenus= null;
     }
+
     public int getAge() {
         return this.age;
     }
+
     public String getPrefferedMenus(int i) {
         return prefferedMenus[i];
     }
+
     public int getNrOfPrefferedMenus() {
         return this.nrOfPrefferedMenus;
     }
+
     public int getRoomIndex(){
         return this.roomIndex;
     }
+
     public void setRoomIndex(int i){
         this.roomIndex=i;
     }
+
     public void read(Scanner sc){
         System.out.println("Enter the guest's name: ");
         this.name= sc.nextLine();
@@ -63,6 +75,7 @@ public class Guest {
             }
         }
     }
+    
     public void write(){
         
     } 

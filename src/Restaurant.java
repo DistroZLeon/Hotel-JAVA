@@ -4,27 +4,35 @@ public class Restaurant {
     private final int[] days;
     private int nrOfSeats, nrOfMenus;
     private Menu[] menus;
+
     public int getNrOfGuestsThatDay(int i) {
         return this.days[i];
     }
-    public void setIdDays(int day, int i) {
-        this.days[i] = day;
+
+    public void setIdDays(int val, int start, int duration) {
+        for(int i= start; i< start+ duration; ++i)
+            this.days[i]= val;
     }
+
     public Menu getMenus(int i) {
         return this.menus[i];
     }
+
     public int getNrOfSeats() {
         return this.nrOfSeats;
     }
+
     public int getNrOfMenus() {
         return this.nrOfMenus;
     }
+    
     public Restaurant(){
         this.days= new int[367];
         for(int i=1; i<366; ++i){
             this.days[i]= 0;
         }
     }
+    
     public void read(Scanner sc){
         this.nrOfSeats= sc.nextInt();
         this.nrOfMenus=sc.nextInt();
