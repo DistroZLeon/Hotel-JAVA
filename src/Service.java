@@ -170,10 +170,24 @@ public class Service {
         }
     }
 
-    public void makeReservation(int index){
-        GuestGroup group= this.groups.get(index);
+    private boolean verifyGroupValidity(GuestGroup group,int nrOfGuestsWithJacuzzi, int nrOfApsJacuzzis, int neccSpectacleRooms){
+       return nrOfGuestsWithJacuzzi> nrOfApsJacuzzis* ApartmentRoom.getMaxCap()||
+            group.getNrOfGuests()> ApartmentRoom.getMaxCap()*this.hotel.getNrApartments()+NormalRoom.getMaxCap()* this.hotel.getNrNormals()||
+            (group.getSpectacleRoomType().equals("Individual")&&
+            ((group.getNrOfGuests()< IndividualSpectacleRoom.getMinCap())||
+            neccSpectacleRooms> this.hotel.getNrIndividuals()))||
+            (group.getSpectacleRoomType().equals("Scene")&&
+            ((group.getNrOfGuests()< SceneSpectacleRoom.getMinCap())||
+            neccSpectacleRooms> this.hotel.getNrScenes()));
+    }
+
+    public void makeReservation(int groupId){
+        GuestGroup group= this.groups.get(groupId);
         int nrOfGuestsWithJacuzzi= 0, mDay= 1, nrOfApsJacuzzis= 0, x= this.hotel.getNrApartments()+ this.hotel.getNrNormals()+ this.hotel.getNrIndividuals()+this.hotel.getNrScenes();
-        int neccSpectacleRooms= group.getSpectacleRoomType().equals("Individual")?(int)Math.ceil(1.0*group.getNrOfGuests()/IndividualSpectacleRoom.getMaxCap()):(int)Math.ceil(1.0*group.getNrOfGuests()/SceneSpectacleRoom.getMaxCap());
+        int neccSpectacleRooms= group.getSpectacleRoomType().equals("Individual")?
+                        (int)Math.ceil(1.0*group.getNrOfGuests()/IndividualSpectacleRoom.getMaxCap()):
+                        (group.getSpectacleRoomType().equals("Scene")?
+                        (int)Math.ceil(1.0*group.getNrOfGuests()/SceneSpectacleRoom.getMaxCap()):0);
         boolean found= false;
         int nrOfBreakfasts= 0;
         for(int i=0; i< group.getNrOfGuests(); ++i){
@@ -186,15 +200,8 @@ public class Service {
         for(int i=0; i< x; ++i)
             if(this.hotel.getRoom(i) instanceof ApartmentRoom)
                 nrOfApsJacuzzis++;
-        if(nrOfGuestsWithJacuzzi> nrOfApsJacuzzis* ApartmentRoom.getMaxCap()||
-            group.getNrOfGuests()> ApartmentRoom.getMaxCap()*this.hotel.getNrApartments()+NormalRoom.getMaxCap()* this.hotel.getNrNormals()||
-            (group.getSpectacleRoomType().equals("Individual")&&
-            ((group.getNrOfGuests()< IndividualSpectacleRoom.getMinCap())||
-            neccSpectacleRooms> this.hotel.getNrIndividuals()))||
-            (group.getSpectacleRoomType().equals("Scene")&&
-            ((group.getNrOfGuests()< SceneSpectacleRoom.getMinCap())||
-            neccSpectacleRooms> this.hotel.getNrScenes()))){
-                this.groups.get(index).setState(-1);
+        if(verifyGroupValidity(group, nrOfGuestsWithJacuzzi, nrOfApsJacuzzis, neccSpectacleRooms)){
+                this.groups.get(groupId).setState(-1);
                 System.out.println("Some validity conditions for the group are not checked.\n");
         }
         else{
@@ -246,7 +253,7 @@ public class Service {
                     ocuppyRooms(new ApartmentRoom(), group, result.getY(), arrayAparts, result.getZ());
                     ocuppyRooms(new IndividualSpectacleRoom() ,group, group.getNrOfIndividuals(), arrayIndivs, result.getZ());
                     ocuppyRooms(new SceneSpectacleRoom(), group, group.getNrOfScenes(), arrayScenes, result.getZ());
-                    this.hotel.getRestaurant().setIdDays(group.getId(), group.getMinDay(), group.getNrOfDays());
+                    this.hotel.getRestaurant().setIdDays(nrOfBreakfasts, group.getMinDay(), group.getNrOfDays());
                     group.sort();
                     i= 0;
                     i= placeGuests(group, i, arrayApsWithJacuzzis, ApartmentRoom.getMaxCap());
@@ -257,5 +264,43 @@ public class Service {
                     mDay= bigMinDay;
             }
         }
+        this.groups.set(groupId, group);
+    }
+
+    public void cancelReservation(int groupId){
+        GuestGroup group= this.groups.get(groupId);
+        group.setState(0);
+        for(int i=0; i< group.getNrOfNormals(); ++i){
+            this.hotel.getRoom(group.getNormalsArray(i)).setIdDays(0,group.getMinDay(), group.getNrOfDays());
+        }
+        for(int i=0; i< group.getNrOfApartments(); ++i){
+            this.hotel.getRoom(group.getApartmentsArray(i)).setIdDays(0,group.getMinDay(), group.getNrOfDays());
+        }
+        for(int i=0; i< group.getNrOfIndividuals(); ++i){
+            this.hotel.getRoom(group.getIndividualsArray(i)).setIdDays(0,group.getMinDay(), group.getNrOfDays());
+        }
+        for(int i=0; i< group.getNrOfScenes(); ++i){
+            this.hotel.getRoom(group.getScenesArray(i)).setIdDays(0,group.getMinDay(), group.getNrOfDays());
+        }
+
+        int nrOfBreakfasts= 0;
+        for(int i=0; i< group.getNrOfGuests(); ++i)
+            if(group.getGuest(i).isWantsAtRestaurant())
+                nrOfBreakfasts++;
+        this.hotel.getRestaurant().setIdDays(-nrOfBreakfasts, group.getMinDay(), group.getNrOfDays());
+
+        System.out.println("The group with the id "+group.getId()+" was cancelled!\nThe group had had reserved: ");
+        if(group.getNrOfNormals()!=0)
+            System.out.println(group.getNrOfNormals()+" Normal Rooms");
+        if(group.getNrOfApartments()!=0)
+            System.out.println(group.getNrOfApartments()+" Apartment Rooms");
+
+        if(!group.getSpectacleRoomType().equals("None")){
+            if(group.getNrOfIndividuals()!=0)
+                System.out.println(group.getNrOfIndividuals()+" Individual Spectacle Rooms");
+            if(group.getNrOfScenes()!=0)
+                System.out.println(group.getNrOfScenes()+" Scene Spectacle Rooms");
+        }
+        this.groups.set(groupId, group);
     }
 }

@@ -146,6 +146,8 @@ public class GuestGroup {
             else
                 this.spectacleRoomType= "Scene";
         }
+        else
+            this.spectacleRoomType= "None";
     }
     
     public void write(){

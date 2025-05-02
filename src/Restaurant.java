@@ -11,7 +11,7 @@ public class Restaurant {
 
     public void setIdDays(int val, int start, int duration) {
         for(int i= start; i< start+ duration; ++i)
-            this.days[i]= val;
+            this.days[i]+= val;
     }
 
     public Menu getMenus(int i) {
