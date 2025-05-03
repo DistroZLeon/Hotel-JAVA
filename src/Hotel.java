@@ -3,6 +3,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Hotel {
+    private static Hotel instance;
     private int nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals;
     private Room[] rooms;
     private final Map<Class<? extends Room>, Integer> roomCounts = new HashMap<>();
@@ -36,8 +37,15 @@ public class Hotel {
         return this.rooms[i];
     }
 
-    public Hotel(){
+    private Hotel(){
         this.restaurant= new Restaurant();
+    }
+
+    public static Hotel getInstance() {
+        if (instance == null) {
+            instance = new Hotel();
+        }
+        return instance;
     }
 
     public void read(Scanner sc){

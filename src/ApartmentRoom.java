@@ -18,6 +18,10 @@ public class ApartmentRoom extends Room implements RoomsInterface {
         super(i);
     }
 
+    public ApartmentRoom(ApartmentRoom other) {
+        super(other);
+    }
+
     public boolean getHasJacuzzi() {
         return this.hasJacuzzi;
     }

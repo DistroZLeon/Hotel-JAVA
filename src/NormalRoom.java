@@ -17,6 +17,10 @@ public class NormalRoom extends Room implements RoomsInterface{
         super(i);
     }
 
+    public NormalRoom(NormalRoom other) {
+        super(other);
+    }
+
     @Override
     public void read(Scanner sc){
         this.basePrice= sc.nextDouble();

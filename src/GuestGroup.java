@@ -5,7 +5,7 @@ public class GuestGroup {
     private int nrOfGuests, nrOfDays, nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals, id, minDay, state;
     private int[] apartmentsArray, normalsArray, scenesArray, individualsArray;
     private Guest[] guests;
-    private String spectacleRoomType;
+    private SpectacleRoomType spectacleRoomType;
 
     public int getNrOfGuests() {
         return this.nrOfGuests;
@@ -19,7 +19,7 @@ public class GuestGroup {
         return this.guests[i];
     }
 
-    public String getSpectacleRoomType() {
+    public SpectacleRoomType getSpectacleRoomType() {
         return this.spectacleRoomType;
     }
 
@@ -118,7 +118,35 @@ public class GuestGroup {
     public GuestGroup(int index){
         this.id= index;
         this.state=1;
-        this.spectacleRoomType= "";
+        this.spectacleRoomType= SpectacleRoomType.NONE;
+    }
+
+    public GuestGroup(GuestGroup other) {
+        this.nrOfGuests = other.nrOfGuests;
+        this.nrOfDays = other.nrOfDays;
+        this.nrOfApartments = other.nrOfApartments;
+        this.nrOfNormals = other.nrOfNormals;
+        this.nrOfScenes = other.nrOfScenes;
+        this.nrOfIndividuals = other.nrOfIndividuals;
+        this.id = other.id;
+        this.minDay = other.minDay;
+        this.state = other.state;
+        this.spectacleRoomType = other.spectacleRoomType;
+        this.apartmentsArray = new int[other.nrOfApartments];
+        this.normalsArray = new int[other.nrOfNormals];
+        this.individualsArray = new int[other.nrOfIndividuals];
+        this.scenesArray = new int[other.nrOfScenes];
+        this.guests= new Guest[other.nrOfGuests];
+        for(int i= 0; i< this.nrOfApartments; ++i)
+            this.apartmentsArray[i]= other.apartmentsArray[i];
+        for(int i= 0; i< this.nrOfNormals; ++i)
+            this.normalsArray[i]= other.normalsArray[i];
+        for(int i= 0; i< this.nrOfIndividuals; ++i)
+            this.individualsArray[i]= other.individualsArray[i];
+        for(int i= 0; i< this.nrOfScenes; ++i)
+            this.scenesArray[i]= other.scenesArray[i];
+        for(int i=0; i< this.nrOfGuests; ++i)
+            this.guests[i]= other.guests[i];
     }
 
     public void sort(){
@@ -142,15 +170,20 @@ public class GuestGroup {
             System.out.println("\nWhat type of spectacle room do you want? Enter 1 for a scene spectacle room, or 0 for an individual spectacle room: ");
             choice= sc.nextInt();
             if(choice==0)
-                this.spectacleRoomType= "Individual";
+                this.spectacleRoomType= SpectacleRoomType.INDIVIDUAL;
             else
-                this.spectacleRoomType= "Scene";
+                this.spectacleRoomType= SpectacleRoomType.SCENE;
         }
-        else
-            this.spectacleRoomType= "None";
+    }
+
+    @Override
+    public String toString() {
+        return "GuestGroup [nrOfApartments=" + nrOfApartments + ", nrOfNormals=" + nrOfNormals + ", nrOfScenes="
+                + nrOfScenes + ", nrOfIndividuals=" + nrOfIndividuals + ", id=" + id + ", minDay=" + minDay
+                + ", apartmentsArray=" + Arrays.toString(apartmentsArray) + ", normalsArray="
+                + Arrays.toString(normalsArray) + ", scenesArray=" + Arrays.toString(scenesArray)
+                + ", individualsArray=" + Arrays.toString(individualsArray) + ", guests=" + Arrays.toString(guests)
+                + ", spectacleRoomType=" + spectacleRoomType + "]";
     }
     
-    public void write(){
-
-    }
 }

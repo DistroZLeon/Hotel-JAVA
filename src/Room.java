@@ -17,6 +17,14 @@ public abstract class Room {
         }
     }
 
+    public Room(Room other) {
+        this.index = other.index;
+        this.basePrice = other.basePrice;
+        this.days= new int[367];
+        for(int i=1; i<366; ++i)
+            this.days[i]= other.days[i];
+    }
+
     public int getIndex() {
         return this.index;
     }

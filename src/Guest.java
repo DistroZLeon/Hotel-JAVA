@@ -9,6 +9,18 @@ public class Guest {
     public Guest(){
     }
 
+    public Guest(Guest other) {
+        this.name = other.name;
+        this.CNP = other.CNP;
+        this.wantsJacuzzi = other.wantsJacuzzi;
+        this.wantsAtRestaurant = other.wantsAtRestaurant;
+        this.age = other.age;
+        this.nrOfPrefferedMenus = other.nrOfPrefferedMenus;
+        this.roomIndex = other.roomIndex;
+        for(int i=0; i< this.nrOfPrefferedMenus; ++i)
+            this.prefferedMenus[i]= other.prefferedMenus[i];
+    }
+
     public String getName() {
         return name;
     }
@@ -75,8 +87,10 @@ public class Guest {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        return name + " that has the CNP " + CNP + ", aged " + age + " has been placed in the Room indexed " + roomIndex+"\n";
+    }
     
-    public void write(){
-        
-    } 
 }

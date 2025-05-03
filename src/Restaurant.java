@@ -32,7 +32,17 @@ public class Restaurant {
             this.days[i]= 0;
         }
     }
-    
+    public Restaurant(Restaurant other) {
+        this.days= new int[367];
+        for(int i=1; i< 366; ++i)
+            this.days[i]= other.days[i];
+        this.nrOfSeats = other.nrOfSeats;
+        this.nrOfMenus = other.nrOfMenus;
+        this.menus= new Menu[this.nrOfMenus];
+        for(int i=0; i< this.nrOfMenus; ++i)
+            this.menus[i]= other.menus[i];    
+    }
+
     public void read(Scanner sc){
         this.nrOfSeats= sc.nextInt();
         this.nrOfMenus=sc.nextInt();

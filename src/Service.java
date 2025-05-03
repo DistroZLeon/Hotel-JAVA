@@ -2,20 +2,32 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Service {
+    private static Service instance;
     private final Hotel hotel;
     private final ArrayList<GuestGroup> groups;
     private static int index=1;
 
-    public Service(){
-        this.hotel= new Hotel();
+    private Service(){
+        this.hotel= Hotel.getInstance();
         this.groups= new ArrayList<>();
+    }
+
+    public static Service getInstance() {
+        if (instance == null) {
+            instance = new Service();
+        }
+        return instance;
+    }
+
+    public GuestGroup getGroup(int index){
+        return this.groups.get(index-1);
     }
 
     public void readHotelDetails(Scanner sc){
         this.hotel.read(sc);
     }
 
-    public void readGuestGroupDetails(Scanner sc){
+    public int readGuestGroupDetails(Scanner sc){
         GuestGroup holder = new GuestGroup(Service.index++);
         holder.read(sc);
         for(int i=0; i<holder.getNrOfGuests(); ++i){
@@ -35,8 +47,11 @@ public class Service {
             }
         }
         this.groups.add(holder);
+        return Service.index-1;
     }
-
+    public int getIndex(){
+        return Service.index;
+    }
     private class ReturnType{
         private int x, y, z;
         public int getX() {
@@ -173,10 +188,10 @@ public class Service {
     private boolean verifyGroupValidity(GuestGroup group,int nrOfGuestsWithJacuzzi, int nrOfApsJacuzzis, int neccSpectacleRooms){
        return nrOfGuestsWithJacuzzi> nrOfApsJacuzzis* ApartmentRoom.getMaxCap()||
             group.getNrOfGuests()> ApartmentRoom.getMaxCap()*this.hotel.getNrApartments()+NormalRoom.getMaxCap()* this.hotel.getNrNormals()||
-            (group.getSpectacleRoomType().equals("Individual")&&
+            (group.getSpectacleRoomType()== SpectacleRoomType.INDIVIDUAL&&
             ((group.getNrOfGuests()< IndividualSpectacleRoom.getMinCap())||
             neccSpectacleRooms> this.hotel.getNrIndividuals()))||
-            (group.getSpectacleRoomType().equals("Scene")&&
+            (group.getSpectacleRoomType()== SpectacleRoomType.SCENE&&
             ((group.getNrOfGuests()< SceneSpectacleRoom.getMinCap())||
             neccSpectacleRooms> this.hotel.getNrScenes()));
     }
@@ -184,9 +199,9 @@ public class Service {
     public void makeReservation(int groupId){
         GuestGroup group= this.groups.get(groupId);
         int nrOfGuestsWithJacuzzi= 0, mDay= 1, nrOfApsJacuzzis= 0, x= this.hotel.getNrApartments()+ this.hotel.getNrNormals()+ this.hotel.getNrIndividuals()+this.hotel.getNrScenes();
-        int neccSpectacleRooms= group.getSpectacleRoomType().equals("Individual")?
+        int neccSpectacleRooms= group.getSpectacleRoomType()== SpectacleRoomType.INDIVIDUAL?
                         (int)Math.ceil(1.0*group.getNrOfGuests()/IndividualSpectacleRoom.getMaxCap()):
-                        (group.getSpectacleRoomType().equals("Scene")?
+                        (group.getSpectacleRoomType()== SpectacleRoomType.SCENE?
                         (int)Math.ceil(1.0*group.getNrOfGuests()/SceneSpectacleRoom.getMaxCap()):0);
         boolean found= false;
         int nrOfBreakfasts= 0;
@@ -224,14 +239,14 @@ public class Service {
                         i++;
                 }
                 accept= true;
-                if(group.getSpectacleRoomType().equals("Individual")){
+                if(group.getSpectacleRoomType()== SpectacleRoomType.INDIVIDUAL){
                     result= free(new IndividualSpectacleRoom(), mDay, bigMinDay, arrayIndivs, group.getNrOfDays(), 0);
                     bigMinDay= result.getX();
                     if(arrayIndivs.size()< neccSpectacleRooms)
                         accept= false;
                 }
                 else
-                    if(group.getSpectacleRoomType().equals("Scene")){
+                    if(group.getSpectacleRoomType()== SpectacleRoomType.SCENE){
                         result= free(new SceneSpectacleRoom(), mDay, bigMinDay, arrayScenes, group.getNrOfDays(), 0);
                         bigMinDay= result.getX();
                         if(arrayScenes.size()< neccSpectacleRooms)
@@ -295,7 +310,7 @@ public class Service {
         if(group.getNrOfApartments()!=0)
             System.out.println(group.getNrOfApartments()+" Apartment Rooms");
 
-        if(!group.getSpectacleRoomType().equals("None")){
+        if(group.getSpectacleRoomType()!=SpectacleRoomType.NONE){
             if(group.getNrOfIndividuals()!=0)
                 System.out.println(group.getNrOfIndividuals()+" Individual Spectacle Rooms");
             if(group.getNrOfScenes()!=0)

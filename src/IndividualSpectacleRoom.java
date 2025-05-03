@@ -17,6 +17,10 @@ public class IndividualSpectacleRoom extends Room implements RoomsInterface {
         super(i);
     }
 
+    public IndividualSpectacleRoom(IndividualSpectacleRoom other) {
+        super(other);
+    }
+
     @Override
     public void read(Scanner sc){
         this.basePrice= sc.nextDouble();
