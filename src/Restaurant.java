@@ -1,9 +1,11 @@
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Restaurant {
     private final int[] days;
     private int nrOfSeats, nrOfMenus;
-    private Menu[] menus;
+    private ArrayList<Menu> menus;
 
     public int getNrOfGuestsThatDay(int i) {
         return this.days[i];
@@ -15,7 +17,7 @@ public class Restaurant {
     }
 
     public Menu getMenus(int i) {
-        return this.menus[i];
+        return this.menus.get(i);
     }
 
     public int getNrOfSeats() {
@@ -38,18 +40,20 @@ public class Restaurant {
             this.days[i]= other.days[i];
         this.nrOfSeats = other.nrOfSeats;
         this.nrOfMenus = other.nrOfMenus;
-        this.menus= new Menu[this.nrOfMenus];
+        this.menus= new ArrayList<>();
         for(int i=0; i< this.nrOfMenus; ++i)
-            this.menus[i]= other.menus[i];    
+            this.menus.set(i,other.menus.get(i));    
     }
 
     public void read(Scanner sc){
         this.nrOfSeats= sc.nextInt();
         this.nrOfMenus=sc.nextInt();
-        this.menus= new Menu[this.nrOfMenus];
+        this.menus= new ArrayList<>();
         for (int i = 0; i < this.nrOfMenus; i++) {
-            this.menus[i]= new Menu();
-            this.menus[i].read(sc);
+            Menu menu= new Menu();
+            menu.read(sc);
+            this.menus.add(i, menu);
         }
+        Collections.sort(this.menus, (m1, m2)-> Double.compare(m1.getCost(), m2.getCost()));
     }
 }

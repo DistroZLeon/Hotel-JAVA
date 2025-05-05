@@ -1,0 +1,104 @@
+0
+4
+4
+John Doe
+1234567890123
+30
+1
+1
+Proteic Breakfast
+Jane Smith
+2234567890123
+28
+0
+1
+Proteic Breakfast
+Mike Johnson
+3234567890123
+35
+1
+1
+Exquisite
+Emily Brown
+4234567890123
+22
+0
+1
+Proteic Breakfast
+1
+0
+0
+6
+6
+Adam West
+5234567890123
+40
+0
+0
+Bruce Wayne
+6234567890123
+45
+0
+0
+Clark Kent
+7234567890123
+38
+0
+0
+Diana Prince
+8234567890123
+36
+0
+0
+Barry Allen
+9234567890123
+29
+0
+1
+Proteic Breakfast
+Arthur Curry
+1023456789012
+33
+0
+1
+Proteic Breakfast
+1
+1
+3
+1
+1
+0
+3
+5
+Tony Stark
+1111111111111
+48
+1
+1
+Exquisite
+Steve Rogers
+2111111111111
+100
+0
+1
+Proteic Breakfast
+Natasha Romanoff
+3111111111111
+35
+1
+0
+Peter Parker
+4111111111111
+21
+0
+0
+Stephen Strange
+5111111111111
+40
+1
+1
+Exquisite
+1
+0
+3
+6

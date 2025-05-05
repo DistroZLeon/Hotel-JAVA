@@ -3,8 +3,8 @@ import java.util.Scanner;
 public class Guest {
     private String name, CNP;
     private boolean wantsJacuzzi, wantsAtRestaurant;
-    private String[] prefferedMenus;
-    private int age, nrOfPrefferedMenus, roomIndex;
+    private String preferedMenu;
+    private int age, roomIndex;
 
     public Guest(){
     }
@@ -15,10 +15,8 @@ public class Guest {
         this.wantsJacuzzi = other.wantsJacuzzi;
         this.wantsAtRestaurant = other.wantsAtRestaurant;
         this.age = other.age;
-        this.nrOfPrefferedMenus = other.nrOfPrefferedMenus;
         this.roomIndex = other.roomIndex;
-        for(int i=0; i< this.nrOfPrefferedMenus; ++i)
-            this.prefferedMenus[i]= other.prefferedMenus[i];
+        this.preferedMenu= other.preferedMenu;
     }
 
     public String getName() {
@@ -39,19 +37,15 @@ public class Guest {
 
     public void notWantsAtRestaurant(){
         this.wantsAtRestaurant=false;
-        this.prefferedMenus= null;
+        this.preferedMenu= null;
     }
 
     public int getAge() {
         return this.age;
     }
 
-    public String getPrefferedMenus(int i) {
-        return prefferedMenus[i];
-    }
-
-    public int getNrOfPrefferedMenus() {
-        return this.nrOfPrefferedMenus;
+    public String getPreferedMenu() {
+        return this.preferedMenu;
     }
 
     public int getRoomIndex(){
@@ -74,16 +68,34 @@ public class Guest {
         this.wantsJacuzzi= !(choice==0);
         System.out.println("\nBreakfast at the restaurant: ");
         choice= sc.nextInt();
-        if(choice==0)
+        sc.nextLine();
+        if(choice== 0)
             this.wantsAtRestaurant= false;
         else{
             this.wantsAtRestaurant= true;
-            System.out.println("\nEnter the number of preferences for the menu:");
-            this.nrOfPrefferedMenus= sc.nextInt();
-            this.prefferedMenus= new String[this.nrOfPrefferedMenus];
-            System.out.println("\nEnter the names of the preferences for the menu:");
-            for (int i = 0; i < this.nrOfPrefferedMenus; i++) {
-                this.prefferedMenus[i]= sc.nextLine();
+            Hotel hotel= Hotel.getInstance();
+            System.out.println("\nEnter the name of the preferenced menu from the list down below or none if you changed your mind:");
+            for(int k=0; k< hotel.getRestaurant().getNrOfMenus(); ++k)
+                System.out.println(hotel.getRestaurant().getMenus(k).getName());
+            boolean canContinue= false;
+            while(!canContinue){
+                System.out.println("Please enter the preference:");
+                String preference= sc.nextLine();
+                preference= preference.trim();
+                if(preference.equalsIgnoreCase("None")){
+                    canContinue=true;
+                    this.preferedMenu= null;
+                    this.wantsAtRestaurant= false;
+                }
+                else{
+                    for(int k=0; k< hotel.getRestaurant().getNrOfMenus(); ++k){
+                        if(hotel.getRestaurant().getMenus(k).getName().equalsIgnoreCase(preference)){
+                            canContinue=true;
+                            this.preferedMenu=preference;
+                            break;
+                        }
+                    }
+                }
             }
         }
     }

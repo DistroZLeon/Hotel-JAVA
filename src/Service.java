@@ -1,15 +1,20 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Service {
     private static Service instance;
     private final Hotel hotel;
-    private final ArrayList<GuestGroup> groups;
+    private final Map<Integer, GuestGroup> groups;
     private static int index=1;
 
     private Service(){
         this.hotel= Hotel.getInstance();
-        this.groups= new ArrayList<>();
+        this.groups= new HashMap<>();
     }
 
     public static Service getInstance() {
@@ -20,7 +25,7 @@ public class Service {
     }
 
     public GuestGroup getGroup(int index){
-        return this.groups.get(index-1);
+        return this.groups.get(index);
     }
 
     public void readHotelDetails(Scanner sc){
@@ -30,23 +35,7 @@ public class Service {
     public int readGuestGroupDetails(Scanner sc){
         GuestGroup holder = new GuestGroup(Service.index++);
         holder.read(sc);
-        for(int i=0; i<holder.getNrOfGuests(); ++i){
-            if(holder.getGuest(i).isWantsAtRestaurant()){
-                boolean exists= false;
-                for(int j=0; j< holder.getGuest(i).getNrOfPrefferedMenus(); ++j)
-                    for(int k=0; k< this.hotel.getRestaurant().getNrOfMenus(); ++k){
-                        if(this.hotel.getRestaurant().getMenus(k).getName().equals(holder.getGuest(i).getPrefferedMenus(j))){
-                            exists=true;
-                            break;
-                        }
-                    }
-                if(!exists){ 
-                    holder.getGuest(i).notWantsAtRestaurant();
-                    System.out.println("There is no menu in the restaurant that has any of the guest's prefferences. Because of this, the guest will automatically dine in the room.\n");
-                }   
-            }
-        }
-        this.groups.add(holder);
+        this.groups.put(holder.getId(), holder);
         return Service.index-1;
     }
     public int getIndex(){
@@ -79,7 +68,7 @@ public class Service {
         int i, j, k, good, start=0, limit, nrJac;
         while(!room.getClass().equals(this.hotel.getRoom(start).getClass())){
             start++;
-        }            
+        }           
         limit= start+ this.hotel.getNrOfThatRoom(room);
         for(i= start; i< limit; ++i){
             for(j= mDay; j< 366- xNrOfDays; ++j){
@@ -103,7 +92,7 @@ public class Service {
                 list.add(i);
             else
                 if(j< bigMinDay)bigMinDay= j;
-        }
+        } 
         obj.setX(bigMinDay);
         return obj;
     }
@@ -130,39 +119,48 @@ public class Service {
     }
 
     private ReturnType chooseBestRoomCombo(int nrGuests, int nrWantJacuzzi, int nrNormals, int nrApsNoJacuzzi, int nrApsWithJacuzzi) {
-        ReturnType obj= null;
-        int minTotalRooms= Integer.MAX_VALUE;
-        
-        for (int apsWithJac= 0; apsWithJac<= nrApsWithJacuzzi; apsWithJac++) {
-            if (apsWithJac* ApartmentRoom.getMaxCap()< nrWantJacuzzi)
+        ReturnType obj = null;
+        int minTotalRooms = Integer.MAX_VALUE;
+        int maxCapApt = ApartmentRoom.getMaxCap();
+        int maxCapNorm = NormalRoom.getMaxCap();
+        for (int apsWithJac = 0; apsWithJac <= nrApsWithJacuzzi; apsWithJac++) {
+            int capWithJac = apsWithJac * maxCapApt;
+            if (capWithJac < nrWantJacuzzi)
                 continue;
-            int remainingGuests= nrGuests- Math.min(apsWithJac* ApartmentRoom.getMaxCap(), nrWantJacuzzi);
-            for (int apsNoJac= 0; apsNoJac<= nrApsNoJacuzzi; apsNoJac++) {
-                int guestsLeft= remainingGuests- apsNoJac* ApartmentRoom.getMaxCap();
-                if (guestsLeft< 0) guestsLeft= 0;
-
-                int neededNormals= (int)Math.ceil(guestsLeft* 1.0/ NormalRoom.getMaxCap());
-                if (neededNormals> nrNormals)
+            for (int apsNoJac = 0; apsNoJac <= nrApsNoJacuzzi; apsNoJac++) {
+                int capNoJac = apsNoJac * maxCapApt;
+                int totalCapSoFar = capWithJac + capNoJac;
+                int guestsLeft = nrGuests - totalCapSoFar;
+                if (guestsLeft < 0)
+                    guestsLeft = 0;
+                int neededNormals = (int) Math.ceil(guestsLeft * 1.0 / maxCapNorm);
+                if (neededNormals > nrNormals)
                     continue;
-
-                int totalRooms= apsWithJac+ apsNoJac+ neededNormals;
-                if (totalRooms< minTotalRooms) {
-                    minTotalRooms= totalRooms;
-                    obj= new ReturnType();
+                int jacuzziWaste = capWithJac - nrWantJacuzzi;
+                int totalRooms = apsWithJac + apsNoJac + neededNormals;
+                boolean isBetter = false;
+                if (obj == null) {
+                    isBetter = true;
+                } else if (totalRooms < minTotalRooms) {
+                    isBetter = true;
+                } else if (totalRooms == minTotalRooms && jacuzziWaste < (obj.getZ() * maxCapApt - nrWantJacuzzi)) {
+                    isBetter = true;
+                }
+                if (isBetter) {
+                    minTotalRooms = totalRooms;
+                    obj = new ReturnType();
                     obj.setX(neededNormals);
                     obj.setY(apsNoJac);
                     obj.setZ(apsWithJac);
                 }
             }
-            if (obj!= null)
-                break;
         }
         return obj;
     }
 
-    private int placeGuests(GuestGroup group, int i, ArrayList<Integer> array, int cap){
+    private int placeGuests(GuestGroup group, int i, ArrayList<Integer> array, int cap, int nrOfRooms){
         int k=0;
-        while(k< array.size()&& i<group.getNrOfGuests()){
+        while(k< nrOfRooms&& i<group.getNrOfGuests()){
             for (int j= 0; j< cap&& i< group.getNrOfGuests(); ++j)
                 group.getGuest(i++).setRoomIndex(this.hotel.getRoom(array.get(k)).getIndex());
             ++k;
@@ -216,7 +214,7 @@ public class Service {
             if(this.hotel.getRoom(i) instanceof ApartmentRoom)
                 nrOfApsJacuzzis++;
         if(verifyGroupValidity(group, nrOfGuestsWithJacuzzi, nrOfApsJacuzzis, neccSpectacleRooms)){
-                this.groups.get(groupId).setState(-1);
+                this.groups.get(groupId-1).setState(-1);
                 System.out.println("Some validity conditions for the group are not checked.\n");
         }
         else{
@@ -254,32 +252,32 @@ public class Service {
                     }
                 result= free(mDay, bigMinDay, group.getNrOfDays(), nrOfBreakfasts);
                 bigMinDay= result.getX();
-                accept= result.getY()== 1;
-                if(arrayAparts.size()* ApartmentRoom.getMaxCap()+ arrayNormals.size()* NormalRoom.getMaxCap()>= group.getNrOfGuests()&& accept){
+                accept= result.getY()== 1&& accept;
+                if(((arrayAparts.size()+ arrayApsWithJacuzzis.size())* ApartmentRoom.getMaxCap()+ arrayNormals.size()* NormalRoom.getMaxCap()>= group.getNrOfGuests()&& arrayApsWithJacuzzis.size()*ApartmentRoom.getMaxCap()>=nrOfGuestsWithJacuzzi)&& accept){
                     found= true;
                     result= chooseBestRoomCombo(group.getNrOfGuests(), nrOfGuestsWithJacuzzi, arrayNormals.size(),arrayAparts.size(), arrayApsWithJacuzzis.size());
                     group.setNrOfNormals(result.getX());
                     group.setNrOfApartments(result.getY()+result.getZ());
-                    group.setMinDay(bigMinDay);
+                    group.setMinDay(mDay);
                     group.setNrOfIndividuals(Math.min(arrayIndivs.size(), neccSpectacleRooms));
                     group.setNrOfScenes(Math.min(arrayScenes.size(), neccSpectacleRooms));
                     ocuppyRooms(new NormalRoom(), group, result.getX(), arrayNormals, 0);
                     ocuppyRooms(new ApartmentRoom(), group, result.getZ(), arrayApsWithJacuzzis, 0);
                     ocuppyRooms(new ApartmentRoom(), group, result.getY(), arrayAparts, result.getZ());
-                    ocuppyRooms(new IndividualSpectacleRoom() ,group, group.getNrOfIndividuals(), arrayIndivs, result.getZ());
-                    ocuppyRooms(new SceneSpectacleRoom(), group, group.getNrOfScenes(), arrayScenes, result.getZ());
+                    ocuppyRooms(new IndividualSpectacleRoom() ,group, group.getNrOfIndividuals(), arrayIndivs, 0);
+                    ocuppyRooms(new SceneSpectacleRoom(), group, group.getNrOfScenes(), arrayScenes, 0);
                     this.hotel.getRestaurant().setIdDays(nrOfBreakfasts, group.getMinDay(), group.getNrOfDays());
                     group.sort();
                     i= 0;
-                    i= placeGuests(group, i, arrayApsWithJacuzzis, ApartmentRoom.getMaxCap());
-                    i= placeGuests(group, i, arrayAparts, ApartmentRoom.getMaxCap());
-                    i= placeGuests(group, i, arrayNormals, NormalRoom.getMaxCap());
+                    i= placeGuests(group, i, arrayApsWithJacuzzis, ApartmentRoom.getMaxCap(), result.getZ());
+                    i= placeGuests(group, i, arrayAparts, ApartmentRoom.getMaxCap(), result.getY());
+                    placeGuests(group, i, arrayNormals, NormalRoom.getMaxCap(), result.getX());
                 }
                 else
                     mDay= bigMinDay;
             }
         }
-        this.groups.set(groupId, group);
+        this.groups.put(groupId, group);
     }
 
     public void cancelReservation(int groupId){
@@ -316,6 +314,45 @@ public class Service {
             if(group.getNrOfScenes()!=0)
                 System.out.println(group.getNrOfScenes()+" Scene Spectacle Rooms");
         }
-        this.groups.set(groupId, group);
+        this.groups.put(groupId, group);
     }
+    public double totalPriceForGroup(int groupId){
+        double price=0;
+        GuestGroup group= this.groups.get(groupId);
+        if(group==null)
+            return -1;
+        for(int i=0; i< group.getNrOfNormals(); ++i)
+            price+=((NormalRoom)this.hotel.getRoom(group.getNormalsArray(i))).getTruePrice();
+        for(int i=0; i< group.getNrOfApartments(); ++i)
+            price+=((ApartmentRoom)this.hotel.getRoom(group.getApartmentsArray(i))).getTruePrice();
+        for(int i=0; i< group.getNrOfIndividuals(); ++i)
+            price+=((IndividualSpectacleRoom)this.hotel.getRoom(group.getIndividualsArray(i))).getTruePrice();
+        for(int i=0; i< group.getNrOfScenes(); ++i)
+            price+=((SceneSpectacleRoom)this.hotel.getRoom(group.getScenesArray(i))).getTruePrice();
+        for(int i=0; i<group.getNrOfGuests(); ++i){
+            String pref= group.getGuest(i).getPreferedMenu();
+            for(int j=0; j< this.hotel.getRestaurant().getNrOfMenus(); ++j)
+                if(this.hotel.getRestaurant().getMenus(j).getName().equalsIgnoreCase(pref)){
+                    price+= this.hotel.getRestaurant().getMenus(j).getCost();
+                    break;
+                }
+        }
+        return price;
+    }
+    public Map<Integer, GuestGroup> sortedByTotalPrice(int order) {
+        List<Map.Entry<Integer, GuestGroup>> entryList = new ArrayList<>(this.groups.entrySet());
+        Collections.sort(entryList, (e1, e2) -> {
+            double price1 = totalPriceForGroup(e1.getValue().getId());
+            double price2 = totalPriceForGroup(e2.getValue().getId());
+            return order > 0 ? Double.compare(price1, price2) : Double.compare(price2, price1);
+        });
+        
+        Map<Integer, GuestGroup> orderedList = new LinkedHashMap<>();
+        for (Map.Entry<Integer, GuestGroup> entry : entryList) {
+            orderedList.put(entry.getKey(), entry.getValue());
+        }
+        
+        return orderedList;
+    }
+
 }

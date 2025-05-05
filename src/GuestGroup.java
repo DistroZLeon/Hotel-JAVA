@@ -158,6 +158,7 @@ public class GuestGroup {
         this.nrOfDays= sc.nextInt();
         System.out.println("\nEnter number of guests in your group: ");
         this.nrOfGuests= sc.nextInt();
+        sc.nextLine();
         this.guests= new Guest[this.nrOfGuests];
         for (int i = 0; i < this.nrOfGuests; i++) {
             this.guests[i]= new Guest();
@@ -178,12 +179,37 @@ public class GuestGroup {
 
     @Override
     public String toString() {
-        return "GuestGroup [nrOfApartments=" + nrOfApartments + ", nrOfNormals=" + nrOfNormals + ", nrOfScenes="
-                + nrOfScenes + ", nrOfIndividuals=" + nrOfIndividuals + ", id=" + id + ", minDay=" + minDay
-                + ", apartmentsArray=" + Arrays.toString(apartmentsArray) + ", normalsArray="
-                + Arrays.toString(normalsArray) + ", scenesArray=" + Arrays.toString(scenesArray)
-                + ", individualsArray=" + Arrays.toString(individualsArray) + ", guests=" + Arrays.toString(guests)
-                + ", spectacleRoomType=" + spectacleRoomType + "]";
+        Hotel hotel= Hotel.getInstance();
+        String str= "\nFor the group with the Id " +id + " the minimum day that they have been allocated is "+ minDay+ ".\nThe group has reserved:\n";
+        if(nrOfNormals!=0){
+            str= str+ nrOfNormals+ " Normal Rooms\nThey have the Id: ";
+            for(int i=0; i<nrOfNormals; ++i)
+                str= str+ hotel.getRoom(normalsArray[i]).getIndex()+ " ";
+            str=str+ "\n";
+        }
+        if(nrOfApartments!=0){
+            str= str+ nrOfApartments+ " Apartment Rooms\nThey have the Id: ";
+            for(int i=0; i<nrOfApartments; ++i)
+                str= str+ hotel.getRoom(apartmentsArray[i]).getIndex()+ " ";
+            str=str+ "\n";
+        }
+        str= str+ "The group has asked for a "+ spectacleRoomType.getLabel()+ " type Spectacle Room.\n";
+        if(nrOfIndividuals!=0){
+            str= str+ nrOfIndividuals+ " Individual Spectacle Rooms\nThey have the Id: ";
+            for(int i=0; i<nrOfIndividuals; ++i)
+                str= str+ hotel.getRoom(individualsArray[i]).getIndex()+ " ";
+            str=str+ "\n";
+        }
+        if(nrOfScenes!=0){
+            str= str+ nrOfScenes+ " Scene Spectacle Rooms\nThey have the Id: ";
+            for(int i=0; i<nrOfScenes; ++i)
+                str= str+ hotel.getRoom(scenesArray[i]).getIndex()+ " ";
+            str=str+ "\n";
+        }
+        for(int i=0; i<nrOfGuests; ++i)
+            str+= guests[i];
+        str+="\n";
+        return str;
     }
     
 }

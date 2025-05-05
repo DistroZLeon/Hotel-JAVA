@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.Map;
 import java.util.Scanner;
 
 public class App {
@@ -47,8 +48,8 @@ public class App {
         }
         boolean continueWithGuestsGroups=true;
         while(continueWithGuestsGroups){
-            System.out.println("Welcome to the interface related to Guest Grpups");
-            System.out.println("Choose the action you want to make:\n Make a new Reservation (Press 0)\nCancel an already made Reservation (Press 1)\nView the details for an already made Reservation (Press 2)\nView the details of all the valid and not cancelled Reservations (Press 3)\nExit Interface (Press 4)");
+            System.out.println("Welcome to the interface related to Guest Groups");
+            System.out.println("Choose the action you want to make:\n Make a new Reservation (Press 0)\nCancel an already made Reservation (Press 1)\nView the details for an already made Reservation (Press 2)\nView the details of all the valid and not cancelled Reservations (Press 3)\nShow the total price for a certain group (Press 4)\nView all the groups sorted either ascending or descending, having the sorting criteria the total cost (Press 5)\nExit Interface (Press 6)\n");
             int choiceStep= readScanner.nextInt();
             switch (choiceStep) {
                 case 0 ->  {
@@ -60,23 +61,62 @@ public class App {
                 case 1 ->  {
                     System.out.println("Enter the id of the GuestGroup.");
                     int index= readScanner.nextInt();
-                    service.cancelReservation(index);
+                    GuestGroup group= service.getGroup(index);
+                    if(group==null)
+                    System.out.println("The index introduced is not a valid one!");
+                    else
+                        service.cancelReservation(index);
                     break;
                 }
                 case 2 -> {
                     System.out.println("Enter the id of the GuestGroup.");
                     int index= readScanner.nextInt();
-                    System.out.println(service.getGroup(index));
+                    readScanner.nextLine();
+                    GuestGroup group= service.getGroup(index);
+                    if(group==null)
+                        System.out.println("The index introduced is not a valid one!");
+                    else{
+                        System.out.println("-------------------------------------------------------------");
+                        System.out.println(group);
+                        System.out.println("-------------------------------------------------------------");
+                    }
                     break;
                 }
                 case 3 ->  {
                     int index= service.getIndex();
+                    System.out.println("-------------------------------------------------------------");
                     for(int i=1; i< index; ++i)
                         if(service.getGroup(i).getState()==1)
                             System.out.println(service.getGroup(i));
+                        else
+                            System.out.println("The group with the Id "+ i+ " has already been cancelled or did not have a valid configuration.\n");
+                    System.out.println("-------------------------------------------------------------");
                     break;
                 }
-                case 4 ->  {
+                case 4 ->{
+                    System.out.println("Enter the id of the GuestGroup.");
+                    int index= readScanner.nextInt();
+                    readScanner.nextLine();
+                    double cost= service.totalPriceForGroup(index);
+                    if(cost== -1)
+                        System.out.println("The Id that you've entered,"+ index+ " is not a valid id.");
+                    else
+                    System.out.println("The total cost for the group with the Id "+ index+ " is "+ cost+ "\n");
+                }
+                case 5 ->{
+                    System.out.println("Enter either an negative number, for descending sort, or a positive number, for a ascending sort!");
+                    int order= readScanner.nextInt();
+                    readScanner.nextLine();
+                    Map<Integer, GuestGroup> orderedList= service.sortedByTotalPrice(order);
+                    System.out.println("\n-------------------------------------------------------------");
+                    for (Map.Entry<Integer, GuestGroup> entry : orderedList.entrySet()) {
+                        GuestGroup group = entry.getValue();
+                        System.out.println(group);
+                        System.out.println("Cost: " + service.totalPriceForGroup(group.getId()) + "\n");
+                    }
+                    System.out.println("-------------------------------------------------------------\n");
+                }
+                case 6 ->  {
                     continueWithGuestsGroups= false;
                     System.out.println("We hope you had a good experience with our app!\nHave a good day!");
                     break;
