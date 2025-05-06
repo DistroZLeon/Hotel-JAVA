@@ -50,9 +50,17 @@ public class Hotel {
 
     public void read(Scanner sc){
         this.nrOfNormals= sc.nextInt();
+        if(this.nrOfNormals<0)
+            this.nrOfNormals=2;
         this.nrOfApartments= sc.nextInt();
+        if(this.nrOfApartments<0)
+            this.nrOfApartments=2;
         this.nrOfIndividuals= sc.nextInt();
+        if(this.nrOfIndividuals<0)
+            this.nrOfIndividuals=2;
         this.nrOfScenes= sc.nextInt();
+        if(this.nrOfScenes<0)
+            this.nrOfScenes=2;
         this.rooms= new Room[this.nrOfNormals+this.nrOfApartments+this.nrOfIndividuals+this.nrOfScenes];
         NormalRoom.setMaxCap(sc.nextInt());
         ApartmentRoom.setMaxCap(sc.nextInt());

@@ -7,7 +7,10 @@ public class ApartmentRoom extends Room implements RoomsInterface {
 
     @Override
     public double getTruePrice(){
-        return this.basePrice*ApartmentRoom.maxCap*1.20;
+        double price= this.basePrice*ApartmentRoom.maxCap*1.10;
+        if(this.hasJacuzzi)
+            price= price* 1.30;
+        return price;
     }
 
     public ApartmentRoom(){

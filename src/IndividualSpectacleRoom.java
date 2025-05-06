@@ -6,7 +6,7 @@ public class IndividualSpectacleRoom extends Room implements RoomsInterface {
 
     @Override
     public double getTruePrice(){
-        return this.basePrice*IndividualSpectacleRoom.maxCap*1.50;
+        return this.basePrice*IndividualSpectacleRoom.maxCap*1.70;
     }
 
     public IndividualSpectacleRoom(){

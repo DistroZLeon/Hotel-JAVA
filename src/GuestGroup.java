@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class GuestGroup {
-    private int nrOfGuests, nrOfDays, nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals, id, minDay, state;
+    private int nrOfGuests, nrOfDays, nrOfApartments, nrOfNormals, nrOfScenes, nrOfIndividuals, id, minDay;
     private int[] apartmentsArray, normalsArray, scenesArray, individualsArray;
     private Guest[] guests;
     private SpectacleRoomType spectacleRoomType;
@@ -103,21 +103,12 @@ public class GuestGroup {
         this.minDay=val;
     }
 
-    public int getState(){
-        return this.state;
-    }
-
-    public void setState(int state){
-        this.state= state;
-    }
-
     public GuestGroup(){
         this(0);
     }
 
     public GuestGroup(int index){
         this.id= index;
-        this.state=1;
         this.spectacleRoomType= SpectacleRoomType.NONE;
     }
 
@@ -130,7 +121,6 @@ public class GuestGroup {
         this.nrOfIndividuals = other.nrOfIndividuals;
         this.id = other.id;
         this.minDay = other.minDay;
-        this.state = other.state;
         this.spectacleRoomType = other.spectacleRoomType;
         this.apartmentsArray = new int[other.nrOfApartments];
         this.normalsArray = new int[other.nrOfNormals];
@@ -156,15 +146,26 @@ public class GuestGroup {
     public void read(Scanner sc){
         System.out.println("Enter number of days for your stay: ");
         this.nrOfDays= sc.nextInt();
+        if(this.nrOfDays<1){
+            System.out.println("Invalid period of time. It will be set by default to 3.\n");
+            this.nrOfDays=3;
+        }
+        if(this.nrOfDays>14){
+            System.out.println("Invalid period of time. It will be set by default to 14.\n");
+            this.nrOfDays=14;
+        }
         System.out.println("\nEnter number of guests in your group: ");
         this.nrOfGuests= sc.nextInt();
+        if(this.nrOfGuests<1){
+            System.out.println("Invalid number of guests. It will be set by default to 1.\n");
+            this.nrOfGuests= 1;
+        }
         sc.nextLine();
         this.guests= new Guest[this.nrOfGuests];
         for (int i = 0; i < this.nrOfGuests; i++) {
             this.guests[i]= new Guest();
+            this.guests[i].read(sc);
         }
-        for(int i=0; i< this.nrOfGuests; ++i)
-            guests[i].read(sc);
         System.out.println("\nDo you want to rent any kind of spectacle room? Enter 1 if so, or 0 otherwise: ");
         int choice= sc.nextInt();
         if(choice==1){
@@ -180,34 +181,34 @@ public class GuestGroup {
     @Override
     public String toString() {
         Hotel hotel= Hotel.getInstance();
-        String str= "\nFor the group with the Id " +id + " the minimum day that they have been allocated is "+ minDay+ ".\nThe group has reserved:\n";
-        if(nrOfNormals!=0){
-            str= str+ nrOfNormals+ " Normal Rooms\nThey have the Id: ";
-            for(int i=0; i<nrOfNormals; ++i)
-                str= str+ hotel.getRoom(normalsArray[i]).getIndex()+ " ";
+        String str= "\nFor the group with the Id " +this.id + " the minimum time slot that they have been allocated is between "+ this.minDay+ " and "+ (this.minDay+this.nrOfDays-1)+".\nThe group has reserved:\n";
+        if(this.nrOfNormals!=0){
+            str= str+ this.nrOfNormals+ " Normal Rooms\nThey have the Id: ";
+            for(int i=0; i<this.nrOfNormals; ++i)
+                str= str+ hotel.getRoom(this.normalsArray[i]).getIndex()+ " ";
             str=str+ "\n";
         }
-        if(nrOfApartments!=0){
-            str= str+ nrOfApartments+ " Apartment Rooms\nThey have the Id: ";
-            for(int i=0; i<nrOfApartments; ++i)
-                str= str+ hotel.getRoom(apartmentsArray[i]).getIndex()+ " ";
+        if(this.nrOfApartments!=0){
+            str= str+ this.nrOfApartments+ " Apartment Rooms\nThey have the Id: ";
+            for(int i=0; i<this.nrOfApartments; ++i)
+                str= str+ hotel.getRoom(this.apartmentsArray[i]).getIndex()+ " ";
             str=str+ "\n";
         }
         str= str+ "The group has asked for a "+ spectacleRoomType.getLabel()+ " type Spectacle Room.\n";
-        if(nrOfIndividuals!=0){
-            str= str+ nrOfIndividuals+ " Individual Spectacle Rooms\nThey have the Id: ";
-            for(int i=0; i<nrOfIndividuals; ++i)
-                str= str+ hotel.getRoom(individualsArray[i]).getIndex()+ " ";
+        if(this.nrOfIndividuals!=0){
+            str= str+ this.nrOfIndividuals+ " Individual Spectacle Rooms\nThey have the Id: ";
+            for(int i=0; i<this.nrOfIndividuals; ++i)
+                str= str+ hotel.getRoom(this.individualsArray[i]).getIndex()+ " ";
             str=str+ "\n";
         }
-        if(nrOfScenes!=0){
-            str= str+ nrOfScenes+ " Scene Spectacle Rooms\nThey have the Id: ";
-            for(int i=0; i<nrOfScenes; ++i)
-                str= str+ hotel.getRoom(scenesArray[i]).getIndex()+ " ";
+        if(this.nrOfScenes!=0){
+            str= str+ this.nrOfScenes+ " Scene Spectacle Rooms\nThey have the Id: ";
+            for(int i=0; i<this.nrOfScenes; ++i)
+                str= str+ hotel.getRoom(this.scenesArray[i]).getIndex()+ " ";
             str=str+ "\n";
         }
-        for(int i=0; i<nrOfGuests; ++i)
-            str+= guests[i];
+        for(int i=0; i<this.nrOfGuests; ++i)
+            str+= this.guests[i];
         str+="\n";
         return str;
     }

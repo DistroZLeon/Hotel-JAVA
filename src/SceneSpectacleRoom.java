@@ -6,7 +6,7 @@ public class SceneSpectacleRoom extends Room implements RoomsInterface{
 
     @Override
     public double getTruePrice(){
-        return this.basePrice*SceneSpectacleRoom.maxCap*2;
+        return this.basePrice*SceneSpectacleRoom.maxCap*1.50;
     }
 
     public SceneSpectacleRoom(){

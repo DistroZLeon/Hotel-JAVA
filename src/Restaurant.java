@@ -46,7 +46,13 @@ public class Restaurant {
     }
 
     public void read(Scanner sc){
+        Hotel hotel= Hotel.getInstance();
         this.nrOfSeats= sc.nextInt();
+        //The number of seats in the restaurant is not allowed to be equal or greater than the maximum capacity 
+        // of the hotel
+        int maxSeats= hotel.getNrApartments()*ApartmentRoom.getMaxCap()+hotel.getNrNormals()*NormalRoom.getMaxCap();
+        if(this.nrOfSeats>= maxSeats)
+            this.nrOfSeats= maxSeats-1;
         this.nrOfMenus=sc.nextInt();
         this.menus= new ArrayList<>();
         for (int i = 0; i < this.nrOfMenus; i++) {

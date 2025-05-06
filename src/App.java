@@ -11,6 +11,7 @@ public class App {
         File fileService;
         boolean goodFile;
         goodFile= false;
+        // Choosing the right file to read the hotel's details
         while(!goodFile){
             System.out.println("Enter the source file for the hotel's data");
             String fileHotelString= firstInteraction.nextLine();
@@ -28,10 +29,12 @@ public class App {
         System.out.println("Choose the input method: File or Console");
         String readMethod= firstInteraction.nextLine();
         readMethod=readMethod.trim();
+        //Chosing either to read from the console or from a file to read for the GuestGroup interface
         if(readMethod.toLowerCase().equals("console"))
             readScanner= new Scanner(System.in);
         else{
             goodFile= false;
+            // Getting the right file to read from for the GuestGroup Interface
             while(!goodFile){
                 System.out.println("Enter the source file for all the data");
                 String fileServiceString= firstInteraction.nextLine();
@@ -55,7 +58,9 @@ public class App {
                 case 0 ->  {
                     int index= service.readGuestGroupDetails(readScanner);
                     service.makeReservation(index);
-                    System.out.println(service.getGroup(index));
+                    GuestGroup group =service.getGroup(index);
+                    if(group!=null)
+                        System.out.println(group);
                     break;
                 }
                 case 1 ->  {
@@ -83,13 +88,9 @@ public class App {
                     break;
                 }
                 case 3 ->  {
-                    int index= service.getIndex();
                     System.out.println("-------------------------------------------------------------");
-                    for(int i=1; i< index; ++i)
-                        if(service.getGroup(i).getState()==1)
-                            System.out.println(service.getGroup(i));
-                        else
-                            System.out.println("The group with the Id "+ i+ " has already been cancelled or did not have a valid configuration.\n");
+                    for(Integer id: service.getAllGroups().keySet())
+                        System.out.println(service.getGroup(id));
                     System.out.println("-------------------------------------------------------------");
                     break;
                 }
@@ -99,12 +100,12 @@ public class App {
                     readScanner.nextLine();
                     double cost= service.totalPriceForGroup(index);
                     if(cost== -1)
-                        System.out.println("The Id that you've entered,"+ index+ " is not a valid id.");
+                        System.out.println("The Id that you've entered, "+ index+ " is not a valid id.");
                     else
                     System.out.println("The total cost for the group with the Id "+ index+ " is "+ cost+ "\n");
                 }
                 case 5 ->{
-                    System.out.println("Enter either an negative number, for descending sort, or a positive number, for a ascending sort!");
+                    System.out.println("Enter either a negative number, for descending sort, or a positive number, for a ascending sort!");
                     int order= readScanner.nextInt();
                     readScanner.nextLine();
                     Map<Integer, GuestGroup> orderedList= service.sortedByTotalPrice(order);

@@ -59,10 +59,20 @@ public class Guest {
     public void read(Scanner sc){
         System.out.println("Enter the guest's name: ");
         this.name= sc.nextLine();
-        System.out.println("\nEnter the guest's CNP: ");
-        this.CNP= sc.nextLine();
-        System.out.println("\nEnter the guest's age: ");
-        this.age= sc.nextInt();
+        boolean canContinue= false;
+        while(!canContinue){
+            System.out.println("\nEnter the guest's CNP, it should be a valid one: ");
+            this.CNP= sc.nextLine().trim();
+            if(this.CNP.length()==13&& (this.CNP.charAt(0)== '1'|| this.CNP.charAt(0)== '2'|| this.CNP.charAt(0)== '5'|| this.CNP.charAt(0)== '6'))
+                canContinue= true;
+        }
+        canContinue= false;
+        while(!canContinue){
+            System.out.println("\nEnter the guest's age, it should be a valid one: ");
+            this.age= sc.nextInt();
+            if(this.age>=0)
+                canContinue= true;
+        }
         System.out.println("\nFurther down there will be extra choices, if the guest wants it, they should enter 1, or 0 otherwise\nJacuzzi: ");
         int choice= sc.nextInt();
         this.wantsJacuzzi= !(choice==0);
@@ -77,7 +87,7 @@ public class Guest {
             System.out.println("\nEnter the name of the preferenced menu from the list down below or none if you changed your mind:");
             for(int k=0; k< hotel.getRestaurant().getNrOfMenus(); ++k)
                 System.out.println(hotel.getRestaurant().getMenus(k).getName());
-            boolean canContinue= false;
+            canContinue= false;
             while(!canContinue){
                 System.out.println("Please enter the preference:");
                 String preference= sc.nextLine();
