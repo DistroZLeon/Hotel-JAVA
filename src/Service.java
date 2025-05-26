@@ -208,9 +208,9 @@ public class Service {
             necSpectacleRooms<= this.hotel.getNrScenes())));
     }
 
-    public void makeReservation(int groupId){
+    public void makeReservation(int groupId, int theMinDay){
         GuestGroup group= this.groups.get(groupId);
-        int nrOfGuestsWithJacuzzi= 0, mDay= 1, nrOfApsJacuzzis= 0, x= this.hotel.getNrApartments()+ this.hotel.getNrNormals()+ this.hotel.getNrIndividuals()+this.hotel.getNrScenes();
+        int nrOfGuestsWithJacuzzi= 0, mDay= theMinDay, nrOfApsJacuzzis= 0, x= this.hotel.getNrApartments()+ this.hotel.getNrNormals()+ this.hotel.getNrIndividuals()+this.hotel.getNrScenes();
         // The necessary number of Spectacle Rooms based on the group's choice for the type of Spectacle Room
         int necSpectacleRooms= group.getSpectacleRoomType()== SpectacleRoomType.INDIVIDUAL?
                         (int)Math.ceil(1.0*group.getNrOfGuests()/IndividualSpectacleRoom.getMaxCap()):
@@ -302,8 +302,15 @@ public class Service {
                     i= placeGuests(group, i, arrayAparts, ApartmentRoom.getMaxCap(), result.getY());
                     placeGuests(group, i, arrayNormals, NormalRoom.getMaxCap(), result.getX());
                 }
-                else
+                else{
+                    if(theMinDay!=1){
+                        System.out.println("The reservation request for the interval that you've entered, "+ theMinDay+ " and "+ (int)(theMinDay+group.getMinDay()-1)+ " is not available!");
+                        this.groups.remove(groupId); 
+                    }
+                    else{
                     mDay= bigMinDay;
+            }
+                }
             }
             this.groups.put(groupId, group);
         }
@@ -387,5 +394,34 @@ public class Service {
         
         return orderedList;
     }
-
+    public double getTotalWinningsForTheMonth(Months month){
+        double total=0;
+        for(Integer id: this.groups.keySet()){
+            int minDay= this.groups.get(id).getMinDay();
+            if(month.getStartDay()<= minDay&& minDay<= month.getEndDay()){
+                int difference= (minDay+ this.groups.get(id).getNrOfDays()+ 1)- month.getEndDay();
+                if(difference<=0)
+                    total+= totalPriceForGroup(id);
+                else
+                    total+= ((this.groups.get(id).getNrOfDays()+ difference)/this.groups.get(id).getNrOfDays())*totalPriceForGroup(id);
+            }
+        }
+        return total;
+    }
+    public double getPercentagePfOccupationPerMonthTypeRoom(Months month, Room room){
+        double percentage=0;
+        int start=0, limit;
+        while(!room.getClass().equals(this.hotel.getRoom(start).getClass())){
+            start++;
+        }           
+        limit= start+ this.hotel.getNrOfThatRoom(room);
+        for(int i=start; i<limit; ++i){
+            int occupiedDays=0;
+            for(int j=month.getStartDay(); j<=month.getEndDay(); ++j)
+                if(this.hotel.getRoom(i).getIdDays(j)!=0)
+                    occupiedDays++;
+            percentage+=occupiedDays/(month.getEndDay()- month.getStartDay()+ 1);
+        }
+        return percentage/this.hotel.getNrOfThatRoom(room);
+    }
 }

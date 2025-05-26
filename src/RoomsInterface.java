@@ -1,3 +1,3 @@
 public interface RoomsInterface {
-    double getTruePrice();
+   default  double getTruePrice(){return 0;};
 }

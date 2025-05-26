@@ -194,7 +194,7 @@ public class GuestGroup {
                 str= str+ hotel.getRoom(this.apartmentsArray[i]).getIndex()+ " ";
             str=str+ "\n";
         }
-        str= str+ "The group has asked for a "+ spectacleRoomType.getLabel()+ " type Spectacle Room.\n";
+        str= str+ "The group has asked for a "+ spectacleRoomType.name()+ " type Spectacle Room.\n";
         if(this.nrOfIndividuals!=0){
             str= str+ this.nrOfIndividuals+ " Individual Spectacle Rooms\nThey have the Id: ";
             for(int i=0; i<this.nrOfIndividuals; ++i)

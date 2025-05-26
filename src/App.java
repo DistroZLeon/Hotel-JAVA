@@ -1,10 +1,28 @@
+import java.beans.Statement;
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Scanner;
 
 public class App {
     @SuppressWarnings({"ConvertToTryWithResources", "UseSpecificCatch"})
     public static void main(String[] args) throws Exception {
+        String url = "jdbc:postgresql://localhost:5432/hoteldb?user=postgres&password=proiectjava";
+        try (Connection conn = DriverManager.getConnection(url)) {
+            System.out.println("Connected to PostgreSQL!");
+            
+            // Example query
+            Statement stmt = (Statement) conn.createStatement();
+            ResultSet rs = ((java.sql.Statement) stmt).executeQuery("SELECT version()");
+            if (rs.next()) {
+                System.out.println("PostgreSQL Version: " + rs.getString(1));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         Service service= Service.getInstance();
         Scanner firstInteraction= new Scanner(System.in);
         Scanner readScanner = null, hotelScanner= null;
@@ -52,12 +70,18 @@ public class App {
         boolean continueWithGuestsGroups=true;
         while(continueWithGuestsGroups){
             System.out.println("Welcome to the interface related to Guest Groups");
-            System.out.println("Choose the action you want to make:\n Make a new Reservation (Press 0)\nCancel an already made Reservation (Press 1)\nView the details for an already made Reservation (Press 2)\nView the details of all the valid and not cancelled Reservations (Press 3)\nShow the total price for a certain group (Press 4)\nView all the groups sorted either ascending or descending, having the sorting criteria the total cost (Press 5)\nExit Interface (Press 6)\n");
+            System.out.println("Choose the action you want to make:\nMake a new Reservation (Press 0)\nCancel an already made Reservation (Press 1)\nView the details for an already made Reservation (Press 2)\nView the details of all the valid and not cancelled Reservations (Press 3)\nShow the total price for a certain group (Press 4)\nView all the groups sorted either ascending or descending, having the sorting criteria the total cost (Press 5)\nExit Interface (Press 6)\n");
             int choiceStep= readScanner.nextInt();
             switch (choiceStep) {
                 case 0 ->  {
+                    System.out.println("Do you want a specific interval or the earliest date? If you want to choose a specific one, enter any positive number, or any negative number or 0 otherwise.\nKeep in mind that the interval might not be available.");
+                    int choice= readScanner.nextInt(), theMinDay=1;
+                    if(choice>0){
+                        System.out.println("Enter the starting date: ");
+                        theMinDay= readScanner.nextInt(); 
+                    }
                     int index= service.readGuestGroupDetails(readScanner);
-                    service.makeReservation(index);
+                    service.makeReservation(index, theMinDay);
                     GuestGroup group =service.getGroup(index);
                     if(group!=null)
                         System.out.println(group);
