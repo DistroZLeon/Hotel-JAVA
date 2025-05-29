@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -205,10 +206,11 @@ public class Service {
             necSpectacleRooms<= this.hotel.getNrIndividuals()))||
             (group.getSpectacleRoomType()== SpectacleRoomType.SCENE&&
             (group.getNrOfGuests()>= SceneSpectacleRoom.getMinCap()&&
-            necSpectacleRooms<= this.hotel.getNrScenes())));
+            necSpectacleRooms<= this.hotel.getNrScenes()))||group.getSpectacleRoomType()== SpectacleRoomType.NONE);
     }
 
-    public void makeReservation(int groupId, int theMinDay){
+    public int makeReservation(int groupId, int theMinDay, int hotelId) throws SQLException{
+        GuestGroupDAO groupDAO= GuestGroupDAO.getInstance();
         GuestGroup group= this.groups.get(groupId);
         int nrOfGuestsWithJacuzzi= 0, mDay= theMinDay, nrOfApsJacuzzis= 0, x= this.hotel.getNrApartments()+ this.hotel.getNrNormals()+ this.hotel.getNrIndividuals()+this.hotel.getNrScenes();
         // The necessary number of Spectacle Rooms based on the group's choice for the type of Spectacle Room
@@ -231,8 +233,9 @@ public class Service {
                 nrOfApsJacuzzis++;
         // Verification of the validity of the request for reservation
         if(!verifyGroupValidity(group, nrOfGuestsWithJacuzzi, nrOfApsJacuzzis, necSpectacleRooms)){
-                this.groups.remove(groupId);
-                System.out.println("Some validity conditions for the group are not checked. There seems to not be either enough rooms for the stay or enough Spectacle Rooms for you group's dimension needs.\n");
+            this.groups.remove(groupId);
+            System.out.println("Some validity conditions for the group are not checked. There seems to not be either enough rooms for the stay or enough Spectacle Rooms for you group's dimension needs.\n");
+            return groupId;
         }
         else{
             // Loop until the group has been allocated the proper number of rooms for its request
@@ -312,11 +315,16 @@ public class Service {
             }
                 }
             }
+            this.groups.remove(groupId);
+            groupId= groupDAO.create(group, hotelId);
+            group.setId(groupId);
             this.groups.put(groupId, group);
+            return groupId;
         }
     }
 
-    public void cancelReservation(int groupId){
+    public void cancelReservation(int groupId) throws SQLException{
+        GuestGroupDAO groupDAO= GuestGroupDAO.getInstance();
         GuestGroup group= this.groups.get(groupId);
         // Freeing all the rooms that the group has occupied
         for(int i=0; i< group.getNrOfNormals(); ++i){
@@ -351,8 +359,8 @@ public class Service {
             if(group.getNrOfScenes()!=0)
                 System.out.println(group.getNrOfScenes()+" Scene Spectacle Rooms");
         }
-        this.groups.put(groupId, group);
         this.groups.remove(groupId);
+        groupDAO.delete(groupId);
     }
     public double totalPriceForGroup(int groupId){
         double price=0;
@@ -368,7 +376,7 @@ public class Service {
         for(int i=0; i< group.getNrOfScenes(); ++i)
             price+=((SceneSpectacleRoom)this.hotel.getRoom(group.getScenesArray(i))).getTruePrice();
         for(int i=0; i<group.getNrOfGuests(); ++i){
-            String pref= group.getGuest(i).getPreferedMenu();
+            String pref= group.getGuest(i).getPreferredMenu();
             for(int j=0; j< this.hotel.getRestaurant().getNrOfMenus(); ++j)
                 if(this.hotel.getRestaurant().getMenus(j).getName().equalsIgnoreCase(pref)){
                     price+= this.hotel.getRestaurant().getMenus(j).getCost();
@@ -420,8 +428,16 @@ public class Service {
             for(int j=month.getStartDay(); j<=month.getEndDay(); ++j)
                 if(this.hotel.getRoom(i).getIdDays(j)!=0)
                     occupiedDays++;
-            percentage+=occupiedDays/(month.getEndDay()- month.getStartDay()+ 1);
+            percentage+=1.0*occupiedDays/(month.getEndDay()- month.getStartDay()+ 1);
         }
-        return percentage/this.hotel.getNrOfThatRoom(room);
+        return 1.0*percentage/this.hotel.getNrOfThatRoom(room);
+    }
+    
+    public void setupGroups(int hotelId) throws SQLException{
+        GuestGroupDAO groupDAO= GuestGroupDAO.getInstance();
+        ArrayList<GuestGroup> dbGroups= groupDAO.read(hotelId, 0);
+        for(GuestGroup group:dbGroups){
+            this.groups.put(group.getId(), group);
+        }
     }
 }

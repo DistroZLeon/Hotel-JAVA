@@ -33,4 +33,19 @@ public enum Months {
     public int getEndDay() {
         return this.endDay;
     }
+    
+     public static Months fromLabel(String label) {
+        if (label == null || label.length() != 3) {
+            throw new IllegalArgumentException("Label must be 3 characters");
+        }
+        
+        String normalizedLabel = label.substring(0, 3).toLowerCase();
+        
+        for (Months month : values()) {
+            if (month.label.toLowerCase().equals(normalizedLabel)) {
+                return month;
+            }
+        }
+        throw new IllegalArgumentException("No month found for label: " + label);
+    }
 }

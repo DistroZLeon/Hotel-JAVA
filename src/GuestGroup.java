@@ -10,7 +10,9 @@ public class GuestGroup {
     public int getNrOfGuests() {
         return this.nrOfGuests;
     }
-
+    public void setId(int id){
+        this.id= id;
+    }
     public int getNrOfDays() {
         return this.nrOfDays;
     }
@@ -112,6 +114,36 @@ public class GuestGroup {
         this.spectacleRoomType= SpectacleRoomType.NONE;
     }
 
+    
+
+    public GuestGroup(int nrOfDays, int id, int minDay, int[] apartmentsArray, int[] normalsArray, int[] scenesArray,
+            int[] individualsArray, Guest[] guests) {
+        this.nrOfDays = nrOfDays;
+        this.id = id;
+        this.minDay = minDay;
+        this.nrOfApartments= apartmentsArray!= null? apartmentsArray.length: 0;
+        this.nrOfNormals= normalsArray!=null? normalsArray.length: 0;
+        this.nrOfIndividuals= individualsArray!=null? individualsArray.length: 0;
+        this.nrOfScenes= scenesArray!=null? scenesArray.length:0;
+        this.nrOfGuests= guests!= null? guests.length: 0;
+        this.apartmentsArray = new int[this.nrOfApartments];
+        this.normalsArray = new int[this.nrOfNormals];
+        this.individualsArray = new int[this.nrOfIndividuals];
+        this.scenesArray = new int[this.nrOfScenes];
+        this.guests= new Guest[this.nrOfGuests];
+        for(int i=0; i< this.nrOfApartments; ++i)
+            this.apartmentsArray[i] = apartmentsArray[i];
+        for(int i=0; i< this.nrOfNormals; ++i)
+            this.normalsArray[i] = normalsArray[i];
+        for(int i=0; i< this.nrOfScenes; ++i)
+            this.scenesArray[i] = scenesArray[i];
+        for(int i=0; i< this.nrOfIndividuals; ++i)
+            this.individualsArray[i] = individualsArray[i];
+        for(int i=0; i< this.nrOfGuests; ++i)
+            this.guests[i] = guests[i];
+        this.spectacleRoomType= this.nrOfIndividuals!=0? SpectacleRoomType.INDIVIDUAL: (this.nrOfScenes!=0? SpectacleRoomType.SCENE: SpectacleRoomType.NONE);
+    }
+
     public GuestGroup(GuestGroup other) {
         this.nrOfGuests = other.nrOfGuests;
         this.nrOfDays = other.nrOfDays;
@@ -176,6 +208,8 @@ public class GuestGroup {
             else
                 this.spectacleRoomType= SpectacleRoomType.SCENE;
         }
+        else
+            this.spectacleRoomType= SpectacleRoomType.NONE;
     }
 
     @Override

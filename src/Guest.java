@@ -3,10 +3,19 @@ import java.util.Scanner;
 public class Guest {
     private String name, CNP;
     private boolean wantsJacuzzi, wantsAtRestaurant;
-    private String preferedMenu;
+    private String preferredMenu;
     private int age, roomIndex;
 
     public Guest(){
+    }
+    
+    public Guest(String name, String CNP, String preferredMenu, int age, int roomIndex) {
+        this.name = name;
+        this.CNP = CNP;
+        this.preferredMenu = preferredMenu;
+        this.wantsAtRestaurant= preferredMenu!= null;
+        this.age = age;
+        this.roomIndex = roomIndex;
     }
 
     public Guest(Guest other) {
@@ -16,7 +25,7 @@ public class Guest {
         this.wantsAtRestaurant = other.wantsAtRestaurant;
         this.age = other.age;
         this.roomIndex = other.roomIndex;
-        this.preferedMenu= other.preferedMenu;
+        this.preferredMenu= other.preferredMenu;
     }
 
     public String getName() {
@@ -37,15 +46,15 @@ public class Guest {
 
     public void notWantsAtRestaurant(){
         this.wantsAtRestaurant=false;
-        this.preferedMenu= null;
+        this.preferredMenu= null;
     }
 
     public int getAge() {
         return this.age;
     }
 
-    public String getPreferedMenu() {
-        return this.preferedMenu;
+    public String getPreferredMenu() {
+        return this.preferredMenu;
     }
 
     public int getRoomIndex(){
@@ -94,14 +103,14 @@ public class Guest {
                 preference= preference.trim();
                 if(preference.equalsIgnoreCase("None")){
                     canContinue=true;
-                    this.preferedMenu= null;
+                    this.preferredMenu= null;
                     this.wantsAtRestaurant= false;
                 }
                 else{
                     for(int k=0; k< hotel.getRestaurant().getNrOfMenus(); ++k){
                         if(hotel.getRestaurant().getMenus(k).getName().equalsIgnoreCase(preference)){
                             canContinue=true;
-                            this.preferedMenu=preference;
+                            this.preferredMenu=preference;
                             break;
                         }
                     }
